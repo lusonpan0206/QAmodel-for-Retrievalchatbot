@@ -72,7 +72,8 @@ if __name__ == '__main__':
     seg = Seg()
     seg.load_userdict('./userdict/userdict.txt')
     # 读取数据
-    qList_kw, questionList, answerList = read_corpus()
+    #qList_kw, questionList, answerList = read_corpus()
+	qList_kw, questionList_corpus, answerList_corpus = read_corpus()
 
     """简单的倒排索引"""
     # 计算倒排表
@@ -85,8 +86,10 @@ if __name__ == '__main__':
             break
         inputQuestionKW = seg.cut(question)
         # 利用关键词匹配得到与原来相似的问题集合
-        questionList_s, answerList_s = filter_questionByInvertTab(inputQuestionKW, questionList, answerList,
-                                                                  invertTable)
+        #questionList_s, answerList_s = filter_questionByInvertTab(inputQuestionKW, questionList, answerList,
+        #                                                         invertTable)
+		questionList_s, answerList_s = filter_questionByInvertTab(inputQuestionKW, questionList_corpus, answerList_corpus,
+                                                                  invertTable)														  
         print(questionList_s)
         if len(questionList_s) > 1:
             questionList = questionList_s
@@ -94,15 +97,18 @@ if __name__ == '__main__':
 
         # 初始化模型
         ss = SentenceSimilarity(seg)
-        ss.set_sentences(questionList)
+        #ss.set_sentences(questionList)
+		ss.set_sentences(questionList_corpus)
         ss.TfidfModel()  # tfidf模型
         # ss.LsiModel()         # lsi模型
         # ss.LdaModel()         # lda模型
 
         question_k = ss.similarity_k(question, 5)
-        print("亲，我们给您找到的答案是： {}".format(answerList[question_k[0][0]]))
+        #print("亲，我们给您找到的答案是： {}".format(answerList[question_k[0][0]]))
+		print("亲，我们给您找到的答案是： {}".format(answerList_corpus[question_k[0][0]]))
         for idx, score in zip(*question_k):
-            print("same questions： {},                score： {}".format(questionList[idx], score))
+            #print("same questions： {},                score： {}".format(questionList[idx], score))
+			print("same questions： {},                score： {}".format(questionList_corpus[idx], score))
         time2 = time.time()
         cost = time2 - time1
         print('Time cost: {} s'.format(cost))
